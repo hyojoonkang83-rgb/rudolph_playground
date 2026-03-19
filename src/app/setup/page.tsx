@@ -35,7 +35,7 @@ export default function SetupPage() {
       <div className="w-full max-w-md space-y-8 rounded-lg border border-border bg-white p-8 shadow-sm">
         <div className="text-center">
           <ShieldCheck className="mx-auto h-12 w-12 text-accent" />
-          <h1 className="mt-4 text-2xl font-bold text-foreground">Initial Admin Setup</h1>
+          <h1 className="mt-4 text-2xl font-bold text-foreground">RUDOLPH Setup</h1>
           <p className="mt-2 text-sm text-secondary">
             시스템 최초 사용을 위한 관리자 계정을 생성합니다.
           </p>

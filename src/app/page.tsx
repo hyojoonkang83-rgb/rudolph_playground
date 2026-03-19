@@ -65,6 +65,46 @@ export default async function DashboardPage() {
             <p className="mt-2 text-secondary">
               사내에서 운영 중인 {services?.length || 0}개의 AI 자동화 서비스를 한눈에 확인하세요.
             </p>
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold text-foreground mb-4">2. 배포 결과 및 검증</h2>
+              <ul className="list-disc pl-5 text-secondary">
+                <li>
+                  <strong className="text-foreground">Production URL</strong>:{" "}
+                  <a
+                    href="https://rudolph-playground.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    https://rudolph-playground.vercel.app
+                  </a>
+                </li>
+                <li>
+                  <strong className="text-foreground">상태 확인</strong>: 500 에러 없이 정상적으로 로그인 페이지가 로드됨을 확인했습니다.
+                </li>
+                <li>
+                  <strong className="text-foreground">모바일 반응형</strong>: 모바일 전용 내비게이션 드로어(Mobile Menu)를 추가하여 스마트폰 및 태블릿에서도 쾌적한 사용이 가능합니다.
+                </li>
+              </ul>
+
+              <h3 className="text-xl font-bold text-foreground mt-6 mb-2">모바일 내비게이션 검증 영상</h3>
+              {/* Note: The image path is a local file path, which won't work in a web application. 
+                  It should be replaced with a publicly accessible URL or an imported image. */}
+              <img
+                src="file:///Users/joon/.gemini/antigravity/brain/8eea89fd-a695-4cc6-bc73-cf55ece625ba/mobile_nav_verify_dashboard_1773922949845.webp"
+                alt="모바일 드로어 확인 영상"
+                className="max-w-full h-auto rounded-lg shadow-md"
+              />
+
+              <h3 className="text-xl font-bold text-foreground mt-6 mb-2">배포 검증 영상 (데스크탑/로그인)</h3>
+              {/* Note: The image path is a local file path, which won't work in a web application. 
+                  It should be replaced with a publicly accessible URL or an imported image. */}
+              <img
+                src="file:///Users/joon/.gemini/antigravity/brain/8eea89fd-a695-4cc6-bc73-cf55ece625ba/vercel_deploy_verify_1773922384649.webp"
+                alt="Vercel 배포 확인 영상"
+                className="max-w-full h-auto rounded-lg shadow-md"
+              />
+            </div>
           </div>
 
           {!services || services.length === 0 ? (

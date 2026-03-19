@@ -17,10 +17,14 @@ export default function SetupPage() {
     setMessage(null);
 
     try {
-      await createAdminAccount(email, password);
-      setMessage("관리자 계정이 성공적으로 생성되었습니다! 이제 로그인 페이지에서 접속하세요.");
+      const result = await createAdminAccount(email, password);
+      if (result.confirmed) {
+        setMessage("✅ 관리자 계정이 즉시 생성되었습니다! 지금 바로 로그인이 가능합니다.");
+      } else {
+        setMessage("⚠️ 계정 생성이 완료되었으나 이메일 인증이 필요할 수 있습니다. [Supabase Dashboard]에서 이메일 인증을 끄거나 확인해 주세요.");
+      }
     } catch (err: any) {
-      setMessage(`에러: ${err.message}`);
+      setMessage(`❌ 에러: ${err.message}`);
     } finally {
       setLoading(false);
     }

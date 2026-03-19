@@ -24,3 +24,10 @@ create policy "Allow authenticated users to manage services"
 on public.services for all
 using (auth.role() = 'authenticated')
 with check (auth.role() = 'authenticated');
+
+-- 4. Insert dummy data
+insert into public.services (title, description, url, category, thumbnail_image)
+values 
+('ChatGPT', 'OpenAI의 강력한 대화형 AI 서비스입니다.', 'https://chat.openai.com', 'Chatbot', 'https://api.placeholder.com/150'),
+('Midjourney', '텍스트를 이미지로 변환하는 최고의 AI 예술 도구입니다.', 'https://www.midjourney.com', 'Image Generation', 'https://api.placeholder.com/150'),
+('Claude', 'Anthropic에서 개발한 정교한 언어 모델입니다.', 'https://claude.ai', 'Chatbot', 'https://api.placeholder.com/150');

@@ -1,13 +1,9 @@
-"use client";
-
-import React, { useState } from "react";
-import { Plus, Search, Bell } from "lucide-react";
+import React from "react";
+import { Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { AddServiceModal } from "./AddServiceModal";
+import { AddServiceButton } from "./AddServiceButton";
 
 export function Header() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border bg-white/80 px-8 backdrop-blur-md">
       <div className="flex flex-1 items-center gap-4">
@@ -27,13 +23,8 @@ export function Header() {
           <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-accent" />
         </Button>
         <div className="h-8 w-[1px] bg-border" />
-        <Button className="gap-2" onClick={() => setIsModalOpen(true)}>
-          <Plus className="h-4 w-4" />
-          New Service
-        </Button>
+        <AddServiceButton />
       </div>
-
-      <AddServiceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </header>
   );
 }

@@ -13,7 +13,7 @@ export function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 hidden h-full w-[260px] flex-col border-r border-border bg-white lg:flex">
       <div className="flex h-16 items-center border-b border-border px-6">
-        <h1 className="text-xl font-bold tracking-tighter">AOH HUB</h1>
+        <h1 className="text-xl font-bold tracking-tighter">RUDOLPH</h1>
       </div>
       
       <nav className="flex-1 space-y-1 p-4">

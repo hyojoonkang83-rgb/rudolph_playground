@@ -60,7 +60,7 @@ export default async function DashboardPage() {
         <div className="p-8">
           <div className="mb-8">
             <h2 className="text-3xl font-bold tracking-tight text-foreground">
-              AOH 서비스 아카이브
+              RUDOLPH 서비스 아카이브
             </h2>
             <p className="mt-2 text-secondary">
               사내에서 운영 중인 {services?.length || 0}개의 AI 자동화 서비스를 한눈에 확인하세요.

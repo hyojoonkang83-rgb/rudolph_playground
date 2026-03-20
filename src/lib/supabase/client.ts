@@ -9,5 +9,9 @@ export function createClient() {
     return createBrowserClient("https://dummy.supabase.co", "dummy-key");
   }
 
-  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+  return createBrowserClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: false,
+    }
+  });
 }

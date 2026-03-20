@@ -122,17 +122,34 @@ $$ language plpgsql security definer;
 
 create trigger on_signup after insert on auth.users for each row execute procedure public.handle_new_user();
 
--- 3. 기존 사용자 권한 전환
+-- 3. 가상 프로젝트(애경 지속가능 프로젝트) 데이터 주입
+insert into public.services (title, description, url, category, thumbnail_image)
+values (
+  '애경 지속가능 프로젝트', 
+  '애경그룹의 ESG 경영 및 지속가능성 지표를 관리하는 AI 자동화 시스템입니다.', 
+  'https://www.aekyung.co.kr', 
+  'document', 
+  'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop'
+)
+on conflict do nothing;
+
+-- 4. 기존 사용자 권한 전환
 insert into public.profiles (id, role)
 select id, 'admin' from auth.users order by created_at asc limit 1
 on conflict (id) do nothing;`}
                     </pre>
                   </div>
 
+                  <div className="p-4 bg-accent/5 rounded-lg border border-accent/10 text-xs text-secondary leading-relaxed">
+                    <p className="font-bold text-accent mb-1">💡 중요 확인 사항:</p>
+                    현재 연결된 Supabase 프로젝트 URL: <code className="bg-white px-1 py-0.5 rounded border border-border">{process.env.NEXT_PUBLIC_SUPABASE_URL}</code><br/>
+                    위 URL과 사용 중인 Supabase 대시보드의 URL이 일치하는지 꼭 확인해 주세요! 다른 프로젝트에 실행하면 반영되지 않습니다.
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div className="p-4 bg-accent/5 rounded-lg border border-accent/10">
                       <span className="font-bold text-accent block mb-1">STEP 1</span>
-                      위 SQL 코드를 복사합니다.
+                      위 SQL 코드를 전체 복사합니다.
                     </div>
                     <div className="p-4 bg-accent/5 rounded-lg border border-accent/10">
                       <span className="font-bold text-accent block mb-1">STEP 2</span>
@@ -140,7 +157,7 @@ on conflict (id) do nothing;`}
                     </div>
                     <div className="p-4 bg-accent/5 rounded-lg border border-accent/10">
                       <span className="font-bold text-accent block mb-1">STEP 3</span>
-                      Run 버튼을 누르고 새로고침하세요!
+                      [Run] 버튼을 누르고 이 페이지를 새로고침하세요!
                     </div>
                   </div>
                 </div>

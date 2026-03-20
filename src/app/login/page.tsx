@@ -33,7 +33,10 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-surface px-4">
       <div className="w-full max-w-md space-y-8 rounded-lg border border-border bg-white p-8 shadow-sm">
-        <div className="text-center">
+        <div className="text-center space-y-2">
+          <div className="flex justify-center">
+            <img src="/logo.png" alt="Rudolph Logo" className="h-12 w-12 object-contain" />
+          </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">RUDOLPH</h1>
           <p className="mt-2 text-sm text-secondary">
             사내 폐쇄형 시스템입니다. 승인된 계정으로 로그인하세요.

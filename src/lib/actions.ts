@@ -104,3 +104,18 @@ export async function getUserRole() {
     return "user";
   }
 }
+
+export async function updateUserRole(userId: string, newRole: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ role: newRole })
+    .eq("id", userId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+}

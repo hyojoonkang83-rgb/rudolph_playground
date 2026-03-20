@@ -17,18 +17,25 @@ interface SidebarProps {
   userEmail?: string | null;
 }
 
-export function Sidebar({ userEmail }: SidebarProps) {
+interface SidebarProps {
+  userEmail?: string | null;
+  isAdmin?: boolean;
+}
+
+export function Sidebar({ userEmail, isAdmin }: SidebarProps) {
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get("category");
 
   return (
     <aside className="fixed left-0 top-0 hidden h-full w-[260px] flex-col border-r border-border bg-white lg:flex">
       <div className="flex h-16 items-center border-b border-border px-6 gap-3">
-        <img src="/logo.png" alt="Rudolph Logo" className="h-8 w-8 object-contain" />
-        <h1 className="text-xl font-bold tracking-tighter">RUDOLPH</h1>
+        <Link href="/" className="flex items-center gap-3">
+          <img src="/logo.png" alt="Rudolph Logo" className="h-8 w-8 object-contain" />
+          <h1 className="text-xl font-bold tracking-tighter text-foreground">RUDOLPH</h1>
+        </Link>
       </div>
       
-      <nav className="flex-1 space-y-1 p-4">
+      <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
         {menuItems.map((item) => {
           const isActive = item.category === currentCategory;
           return (
@@ -47,6 +54,19 @@ export function Sidebar({ userEmail }: SidebarProps) {
             </Link>
           );
         })}
+
+        {isAdmin && (
+          <div className="mt-8 pt-4 border-t border-border/50">
+            <p className="px-3 mb-2 text-[10px] font-bold text-secondary uppercase tracking-widest">Administrator</p>
+            <Link
+              href="/admin"
+              className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-accent hover:bg-accent/5 transition-all"
+            >
+              <Settings className="h-4 w-4" />
+              Admin Dashboard
+            </Link>
+          </div>
+        )}
       </nav>
 
       <div className="border-t border-border p-4 space-y-4">

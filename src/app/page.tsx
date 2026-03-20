@@ -170,7 +170,7 @@ on conflict (id) do nothing;`}
 
   return (
     <div className="flex min-h-screen bg-surface">
-      <Sidebar userEmail={userEmail} />
+      <Sidebar userEmail={userEmail} isAdmin={isAdmin} />
       <main className="flex-1 lg:pl-[260px]">
         <Header isAdmin={isAdmin} userEmail={userEmail} />
         

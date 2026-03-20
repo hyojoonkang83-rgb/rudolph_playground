@@ -1,7 +1,6 @@
 import React from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
-import { ServiceCard } from "@/components/ServiceCard";
 import { createClient } from "@/lib/supabase/server";
 import { 
   Sparkles, 
@@ -38,7 +37,7 @@ export default async function DashboardPage({
   }
 
   const { data: services, error } = isEnvMissing 
-    ? { data: null, error: { message: "Environment variables missing", code: "ENV_MISSING" } as any }
+    ? { data: null, error: { message: "Environment variables missing", code: "ENV_MISSING" } as { message: string, code: string } }
     : await dbQuery.order("created_at", { ascending: false });
 
   if (error || isEnvMissing) {

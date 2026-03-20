@@ -1,13 +1,15 @@
 "use client";
 
 import { updateUserRole } from "@/lib/actions";
-import { Shield, User, UserCheck, Search } from "lucide-react";
+import { Shield, User, Search } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
+import { Profile } from "@/types";
+
 interface UserManagementTableProps {
-  profiles: any[];
+  profiles: Profile[];
 }
 
 export function UserManagementTable({ profiles: initialProfiles }: UserManagementTableProps) {
@@ -24,7 +26,7 @@ export function UserManagementTable({ profiles: initialProfiles }: UserManagemen
     try {
       await updateUserRole(id, newRole);
       setProfiles(profiles.map(p => p.id === id ? { ...p, role: newRole } : p));
-    } catch (error) {
+    } catch {
       alert("권한 변경 중 오류가 발생했습니다.");
     } finally {
       setUpdatingId(null);

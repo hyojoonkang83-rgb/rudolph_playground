@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AddServiceButton } from "./AddServiceButton";
@@ -17,10 +17,6 @@ export function Header({ isAdmin, userEmail, title }: HeaderProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
-
-  useEffect(() => {
-    setQuery(searchParams.get("q") || "");
-  }, [searchParams]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

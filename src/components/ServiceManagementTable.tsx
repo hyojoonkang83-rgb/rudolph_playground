@@ -5,8 +5,10 @@ import { Trash2, ExternalLink, Edit, Search } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 
+import { Service } from "@/types";
+
 interface ServiceManagementTableProps {
-  services: any[];
+  services: Service[];
 }
 
 export function ServiceManagementTable({ services: initialServices }: ServiceManagementTableProps) {
@@ -23,7 +25,7 @@ export function ServiceManagementTable({ services: initialServices }: ServiceMan
     try {
       await deleteService(id);
       setServices(services.filter(s => s.id !== id));
-    } catch (error) {
+    } catch {
       alert("삭제 중 오류가 발생했습니다.");
     }
   };

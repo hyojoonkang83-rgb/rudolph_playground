@@ -29,6 +29,7 @@ export async function createClient() {
           try {
             cookiesToSet.forEach(({ name, value, options }) => {
               // Forced Login: Remove maxAge to make it a session-only cookie
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               const { maxAge, ...sessionOptions } = options;
               cookieStore.set(name, value, sessionOptions);
             });

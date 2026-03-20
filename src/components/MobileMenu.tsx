@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
+
 import React, { useState } from "react";
-import { Menu, X, LayoutGrid, FileText, Image, Calendar, LogOut } from "lucide-react";
+import { Menu, X, LayoutGrid, FileText, Image as ImageIcon, Calendar, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,7 +12,7 @@ import Link from "next/link";
 
 const menuItems = [
   { icon: LayoutGrid, label: "All Services", category: null },
-  { icon: Image, label: "Image Tools", category: "image" },
+  { icon: ImageIcon, label: "Image Tools", category: "image" },
   { icon: FileText, label: "Documents", category: "document" },
   { icon: Calendar, label: "Schedules", category: "schedule" },
 ];
@@ -56,7 +58,7 @@ export function MobileMenu({ userEmail }: MobileMenuProps) {
               className="fixed inset-y-0 left-0 z-50 w-[280px] bg-white p-6 shadow-2xl"
             >
               <div className="flex items-center gap-3 mb-8">
-                <img src="/logo.png" alt="Rudolph Logo" className="h-8 w-8 object-contain" />
+                <Image src="/logo.png" alt="Rudolph Logo" width={32} height={32} className="object-contain" />
                 <h2 className="text-xl font-bold tracking-tighter">RUDOLPH</h2>
                 <div className="flex-1" />
                 <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)} className="p-1">

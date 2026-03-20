@@ -6,11 +6,12 @@ import { UserManagementTable } from "./UserManagementTable";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Users, Database } from "lucide-react";
+import { Users, Database } from "lucide-react";
+import { Service, Profile } from "@/types";
 
 interface AdminDashboardProps {
-  services: any[];
-  profiles: any[];
+  services: Service[];
+  profiles: Profile[];
   userEmail: string | null;
 }
 

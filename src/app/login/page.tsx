@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import React, { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
@@ -48,7 +50,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8 rounded-lg border border-border bg-white p-8 shadow-sm">
         <div className="text-center space-y-2">
           <div className="flex justify-center">
-            <img src="/logo.png" alt="Rudolph Logo" className="h-12 w-12 object-contain" />
+            <Image src="/logo.png" alt="Rudolph Logo" width={48} height={48} className="object-contain" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">RUDOLPH</h1>
           <p className="mt-2 text-sm text-secondary">

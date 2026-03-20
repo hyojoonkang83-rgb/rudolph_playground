@@ -23,8 +23,12 @@ export default function SetupPage() {
       } else {
         setMessage("⚠️ 계정 생성이 완료되었으나 이메일 인증이 필요할 수 있습니다. [Supabase Dashboard]에서 이메일 인증을 끄거나 확인해 주세요.");
       }
-    } catch (err: any) {
-      setMessage(`❌ 에러: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setMessage(`❌ 에러: ${err.message}`);
+      } else {
+        setMessage(`❌ 에러: 알 수 없는 오류`);
+      }
     } finally {
       setLoading(false);
     }

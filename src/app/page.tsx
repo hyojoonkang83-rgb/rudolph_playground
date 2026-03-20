@@ -27,51 +27,63 @@ const getIcon = (category: string) => {
 };
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const isEnvMissing = !supabaseUrl || !supabaseAnonKey;
+
   const role = await getUserRole();
   const isAdmin = role === "admin";
-  
-  const { data: services, error } = await supabase
-    .from("services")
-    .select("*")
-    .order("created_at", { ascending: false });
 
-  if (error) {
-    const isTableMissing = error.message.includes("public.services") || error.code === "PGRST116" || error.message.includes("schema cache");
+  const supabase = await createClient();
+  const { data: services, error } = isEnvMissing 
+    ? { data: null, error: { message: "Environment variables missing", code: "ENV_MISSING" } as any }
+    : await supabase
+        .from("services")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+  if (error || isEnvMissing) {
+    const isTableMissing = error?.message?.includes("public.services") || 
+                           error?.code === "PGRST116" || 
+                           error?.message?.includes("schema cache") || 
+                           isEnvMissing;
 
     return (
       <div className="flex min-h-screen bg-surface">
-        <Sidebar />
+        <Sidebar aria-hidden="true" />
         <main className="flex-1 lg:pl-[260px]">
           <Header isAdmin={isAdmin} />
           <div className="p-8 max-w-4xl mx-auto">
             {isTableMissing ? (
               <div className="rounded-xl border border-border bg-white p-8 shadow-sm">
                 <div className="flex items-center gap-3 text-accent mb-4">
-                  <Sparkles className="h-8 w-8" />
-                  <h2 className="text-2xl font-bold">RUDOLPH 서비스 초기 안정화</h2>
+                  <Sparkles className="h-8 w-8 text-accent" />
+                  <h2 className="text-2xl font-bold text-foreground">RUDOLPH 서비스 초기 안정화</h2>
                 </div>
                 
-                <p className="text-secondary mb-6">
-                  데이터베이스 테이블이 아직 생성되지 않았습니다. 프로젝트를 안정화하기 위해 아래 SQL 스크립트를 딱 한 번만 실행해 주세요.
-                </p>
+                {isEnvMissing ? (
+                  <div className="p-4 bg-danger/5 border border-danger/20 rounded-lg mb-6">
+                    <p className="text-danger font-medium flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4" />
+                      환경 변수(Environment Variables) 설정이 누락되었습니다.
+                    </p>
+                    <p className="text-sm text-secondary mt-1 ml-6">
+                      Vercel 프로젝트 설정에서 NEXT_PUBLIC_SUPABASE_URL과 NEXT_PUBLIC_SUPABASE_ANON_KEY를 확인해 주세요.
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-secondary mb-6">
+                    데이터베이스 테이블이 아직 생성되지 않았습니다. 프로젝트를 안정화하기 위해 아래 SQL 스크립트를 딱 한 번만 실행해 주세요.
+                  </p>
+                )}
 
                 <div className="space-y-6">
                   <div className="bg-surface rounded-lg p-4 border border-border overflow-hidden">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-xs font-semibold text-secondary uppercase">Supabase SQL Script</span>
-                      <button 
-                        onClick={() => {
-                          const sql = document.getElementById('setup-sql')?.innerText;
-                          if (sql) navigator.clipboard.writeText(sql);
-                          alert('SQL이 복사되었습니다!');
-                        }}
-                        className="text-xs text-accent hover:underline"
-                      >
-                        Copy to Clipboard
-                      </button>
+                      <span className="text-[10px] text-accent font-medium">Drag to copy SQL</span>
                     </div>
-                    <pre id="setup-sql" className="text-[10px] md:text-sm text-foreground overflow-x-auto max-h-64 whitespace-pre-wrap leading-relaxed">
+                    <pre className="text-[10px] md:text-xs text-foreground overflow-x-auto max-h-64 whitespace-pre-wrap leading-relaxed font-mono">
 {`-- 1. 서비스 및 프로필 테이블 생성
 create table if not exists public.services (
   id uuid primary key default gen_random_uuid(),
@@ -135,10 +147,10 @@ on conflict (id) do nothing;`}
               </div>
             ) : (
               <div className="flex h-[calc(100vh-160px)] items-center justify-center">
-                <div className="flex flex-col items-center text-center">
+                <div className="flex flex-col items-center text-center max-w-md">
                   <AlertCircle className="h-12 w-12 text-danger mb-4" />
                   <h3 className="text-xl font-bold text-foreground">데이터를 불러오지 못했습니다</h3>
-                  <p className="mt-2 text-secondary">{error.message}</p>
+                  <p className="mt-2 text-secondary">{error?.message || "알 수 없는 에러가 발생했습니다."}</p>
                 </div>
               </div>
             )}

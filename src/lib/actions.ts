@@ -82,15 +82,25 @@ export async function getUser() {
 }
 
 export async function getUserRole() {
-  const user = await getUser();
-  if (!user) return null;
+  try {
+    const user = await getUser();
+    if (!user) return null;
 
-  const supabase = await createClient();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+    const supabase = await createClient();
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
 
-  return profile?.role || "user";
+    if (error) {
+      console.error(`[AUTH] Error fetching role: ${error.message}`);
+      return "user";
+    }
+
+    return profile?.role || "user";
+  } catch (err) {
+    console.error(`[AUTH] Unexpected error in getUserRole:`, err);
+    return "user";
+  }
 }

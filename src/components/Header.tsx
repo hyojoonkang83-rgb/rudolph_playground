@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/Button";
 import { AddServiceButton } from "./AddServiceButton";
 import { MobileMenu } from "./MobileMenu";
 
-export function Header() {
+interface HeaderProps {
+  isAdmin?: boolean;
+}
+
+export function Header({ isAdmin }: HeaderProps) {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border bg-white/80 px-4 md:px-8 backdrop-blur-md">
       <div className="flex items-center gap-4">
@@ -25,7 +29,7 @@ export function Header() {
           <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-accent" />
         </Button>
         <div className="hidden h-8 w-[1px] bg-border md:block" />
-        <AddServiceButton />
+        <AddServiceButton isAdmin={isAdmin} />
       </div>
     </header>
   );

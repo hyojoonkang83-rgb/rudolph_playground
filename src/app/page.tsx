@@ -12,6 +12,7 @@ import {
   Sparkles, 
   AlertCircle 
 } from "lucide-react";
+import { getUserRole } from "@/lib/actions";
 
 // Helper to map category to icon (Server Component compatible)
 const getIcon = (category: string) => {
@@ -27,6 +28,8 @@ const getIcon = (category: string) => {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+  const role = await getUserRole();
+  const isAdmin = role === "admin";
   
   const { data: services, error } = await supabase
     .from("services")
@@ -34,17 +37,111 @@ export default async function DashboardPage() {
     .order("created_at", { ascending: false });
 
   if (error) {
+    const isTableMissing = error.message.includes("public.services") || error.code === "PGRST116" || error.message.includes("schema cache");
+
     return (
       <div className="flex min-h-screen bg-surface">
         <Sidebar />
         <main className="flex-1 lg:pl-[260px]">
-          <Header />
-          <div className="flex h-[calc(100-64px)] items-center justify-center p-8">
-            <div className="flex flex-col items-center text-center">
-              <AlertCircle className="h-12 w-12 text-danger mb-4" />
-              <h3 className="text-xl font-bold text-foreground">데이터를 불러오지 못했습니다</h3>
-              <p className="mt-2 text-secondary">잠시 후 다시 시도해 주세요. 에러: {error.message}</p>
-            </div>
+          <Header isAdmin={isAdmin} />
+          <div className="p-8 max-w-4xl mx-auto">
+            {isTableMissing ? (
+              <div className="rounded-xl border border-border bg-white p-8 shadow-sm">
+                <div className="flex items-center gap-3 text-accent mb-4">
+                  <Sparkles className="h-8 w-8" />
+                  <h2 className="text-2xl font-bold">RUDOLPH 서비스 초기 안정화</h2>
+                </div>
+                
+                <p className="text-secondary mb-6">
+                  데이터베이스 테이블이 아직 생성되지 않았습니다. 프로젝트를 안정화하기 위해 아래 SQL 스크립트를 딱 한 번만 실행해 주세요.
+                </p>
+
+                <div className="space-y-6">
+                  <div className="bg-surface rounded-lg p-4 border border-border overflow-hidden">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs font-semibold text-secondary uppercase">Supabase SQL Script</span>
+                      <button 
+                        onClick={() => {
+                          const sql = document.getElementById('setup-sql')?.innerText;
+                          if (sql) navigator.clipboard.writeText(sql);
+                          alert('SQL이 복사되었습니다!');
+                        }}
+                        className="text-xs text-accent hover:underline"
+                      >
+                        Copy to Clipboard
+                      </button>
+                    </div>
+                    <pre id="setup-sql" className="text-[10px] md:text-sm text-foreground overflow-x-auto max-h-64 whitespace-pre-wrap leading-relaxed">
+{`-- 1. 서비스 및 프로필 테이블 생성
+create table if not exists public.services (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text not null,
+  url text not null,
+  category text not null,
+  thumbnail_image text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists public.profiles (
+  id uuid references auth.users on delete cascade primary key,
+  role text not null default 'user' check (role in ('admin', 'user')),
+  created_at timestamptz default now()
+);
+
+-- 2. 보안 정책(RLS) 및 트리거 자동화
+alter table public.services enable row level security;
+alter table public.profiles enable row level security;
+
+create policy "public_view" on public.services for select using (true);
+create policy "admin_manage" on public.services for all using (
+  exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+);
+
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, role)
+  values (new.id, case when not exists (select 1 from public.profiles) then 'admin' else 'user' end);
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_signup after insert on auth.users for each row execute procedure public.handle_new_user();
+
+-- 3. 기존 사용자 권한 전환
+insert into public.profiles (id, role)
+select id, 'admin' from auth.users order by created_at asc limit 1
+on conflict (id) do nothing;`}
+                    </pre>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="p-4 bg-accent/5 rounded-lg border border-accent/10">
+                      <span className="font-bold text-accent block mb-1">STEP 1</span>
+                      위 SQL 코드를 복사합니다.
+                    </div>
+                    <div className="p-4 bg-accent/5 rounded-lg border border-accent/10">
+                      <span className="font-bold text-accent block mb-1">STEP 2</span>
+                      Supabase SQL Editor에 붙여넣습니다.
+                    </div>
+                    <div className="p-4 bg-accent/5 rounded-lg border border-accent/10">
+                      <span className="font-bold text-accent block mb-1">STEP 3</span>
+                      Run 버튼을 누르고 새로고침하세요!
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex h-[calc(100vh-160px)] items-center justify-center">
+                <div className="flex flex-col items-center text-center">
+                  <AlertCircle className="h-12 w-12 text-danger mb-4" />
+                  <h3 className="text-xl font-bold text-foreground">데이터를 불러오지 못했습니다</h3>
+                  <p className="mt-2 text-secondary">{error.message}</p>
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>
@@ -55,7 +152,7 @@ export default async function DashboardPage() {
     <div className="flex min-h-screen bg-surface">
       <Sidebar />
       <main className="flex-1 lg:pl-[260px]">
-        <Header />
+        <Header isAdmin={isAdmin} />
         
         <div className="p-8">
           <div className="mb-8">
@@ -65,46 +162,6 @@ export default async function DashboardPage() {
             <p className="mt-2 text-secondary">
               사내에서 운영 중인 {services?.length || 0}개의 AI 자동화 서비스를 한눈에 확인하세요.
             </p>
-            <div className="mt-8">
-              <h2 className="text-2xl font-bold text-foreground mb-4">2. 배포 결과 및 검증</h2>
-              <ul className="list-disc pl-5 text-secondary">
-                <li>
-                  <strong className="text-foreground">Production URL</strong>:{" "}
-                  <a
-                    href="https://rudolph-playground.vercel.app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    https://rudolph-playground.vercel.app
-                  </a>
-                </li>
-                <li>
-                  <strong className="text-foreground">상태 확인</strong>: 500 에러 없이 정상적으로 로그인 페이지가 로드됨을 확인했습니다.
-                </li>
-                <li>
-                  <strong className="text-foreground">모바일 반응형</strong>: 모바일 전용 내비게이션 드로어(Mobile Menu)를 추가하여 스마트폰 및 태블릿에서도 쾌적한 사용이 가능합니다.
-                </li>
-              </ul>
-
-              <h3 className="text-xl font-bold text-foreground mt-6 mb-2">모바일 내비게이션 검증 영상</h3>
-              {/* Note: The image path is a local file path, which won't work in a web application. 
-                  It should be replaced with a publicly accessible URL or an imported image. */}
-              <img
-                src="file:///Users/joon/.gemini/antigravity/brain/8eea89fd-a695-4cc6-bc73-cf55ece625ba/mobile_nav_verify_dashboard_1773922949845.webp"
-                alt="모바일 드로어 확인 영상"
-                className="max-w-full h-auto rounded-lg shadow-md"
-              />
-
-              <h3 className="text-xl font-bold text-foreground mt-6 mb-2">배포 검증 영상 (데스크탑/로그인)</h3>
-              {/* Note: The image path is a local file path, which won't work in a web application. 
-                  It should be replaced with a publicly accessible URL or an imported image. */}
-              <img
-                src="file:///Users/joon/.gemini/antigravity/brain/8eea89fd-a695-4cc6-bc73-cf55ece625ba/vercel_deploy_verify_1773922384649.webp"
-                alt="Vercel 배포 확인 영상"
-                className="max-w-full h-auto rounded-lg shadow-md"
-              />
-            </div>
           </div>
 
           {!services || services.length === 0 ? (
@@ -117,15 +174,18 @@ export default async function DashboardPage() {
               {services.map((service) => (
                 <ServiceCard 
                   key={service.id} 
+                  id={service.id}
                   title={service.title}
                   description={service.description}
                   category={service.category}
                   url={service.url}
                   icon={getIcon(service.category)}
+                  isAdmin={isAdmin}
                 />
               ))}
             </div>
-          )}
+          )
+}
         </div>
       </main>
     </div>

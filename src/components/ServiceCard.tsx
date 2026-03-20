@@ -1,27 +1,63 @@
-import React from "react";
-import { ArrowUpRight, MoreVertical } from "lucide-react";
+"use client";
+
+import React, { useTransition } from "react";
+import { ArrowUpRight, MoreVertical, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { deleteService } from "@/lib/actions";
 
 interface ServiceCardProps {
+  id: string;
   title: string;
   description: string;
   category: string;
   url: string;
   icon?: React.ReactNode;
+  isAdmin?: boolean;
 }
 
-export function ServiceCard({ title, description, category, url, icon }: ServiceCardProps) {
+export function ServiceCard({ id, title, description, category, url, icon, isAdmin }: ServiceCardProps) {
+  const [isPending, startTransition] = useTransition();
+
+  const handleDelete = () => {
+    if (confirm(`'${title}' 서비스를 삭제하시겠습니까?`)) {
+      startTransition(async () => {
+        try {
+          await deleteService(id);
+        } catch (error) {
+          alert("서비스 삭제 중 오류가 발생했습니다.");
+          console.error(error);
+        }
+      });
+    }
+  };
+
   return (
-    <div className="card-hover group relative flex flex-col justify-between rounded-lg border border-border bg-white p-6 shadow-sm overflow-hidden">
+    <div className={cn(
+      "card-hover group relative flex flex-col justify-between rounded-lg border border-border bg-white p-6 shadow-sm overflow-hidden",
+      isPending && "opacity-50 pointer-events-none"
+    )}>
       <div>
         <div className="flex items-start justify-between">
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface text-accent">
             {icon || <div className="h-6 w-6 rounded-full bg-accent/20" />}
           </div>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <MoreVertical className="h-4 w-4" />
-          </Button>
+          {isAdmin && (
+            <div className="flex gap-1">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 w-8 p-0 text-secondary hover:text-danger"
+                onClick={handleDelete}
+                disabled={isPending}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
         
         <div className="mt-4">

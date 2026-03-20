@@ -45,6 +45,7 @@ export async function deleteService(id: string) {
  * This should be removed after the first run or secured.
  * For this playground, we'll allow it for the user to set up their account.
  */
+
 export async function createAdminAccount(email: string, password: string) {
   const supabase = await createClient();
 
@@ -72,4 +73,24 @@ export async function createAdminAccount(email: string, password: string) {
       ? "계정이 즉시 활성화되었습니다." 
       : "계정 생성이 요청되었습니다. 이메일 인증이 필요할 수 있습니다. (Supabase 설정 확인 필요)"
   };
+}
+
+export async function getUser() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
+}
+
+export async function getUserRole() {
+  const user = await getUser();
+  if (!user) return null;
+
+  const supabase = await createClient();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  return profile?.role || "user";
 }

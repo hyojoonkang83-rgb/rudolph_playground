@@ -5,8 +5,14 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AddServiceModal } from "./AddServiceModal";
 
-export function AddServiceButton() {
+interface AddServiceButtonProps {
+  isAdmin?: boolean;
+}
+
+export function AddServiceButton({ isAdmin }: AddServiceButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  if (!isAdmin) return null;
 
   return (
     <>

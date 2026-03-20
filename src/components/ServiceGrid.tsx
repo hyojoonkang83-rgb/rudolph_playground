@@ -3,7 +3,14 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ServiceCard } from "./ServiceCard";
-import { Sparkles } from "lucide-react";
+import { 
+  Sparkles, 
+  Calendar, 
+  Image as ImageIcon, 
+  FileText, 
+  Code, 
+  MessageSquare 
+} from "lucide-react";
 
 interface Service {
   id: string;
@@ -16,10 +23,21 @@ interface Service {
 interface ServiceGridProps {
   services: Service[];
   isAdmin: boolean;
-  getIcon: (category: string) => React.ReactNode;
 }
 
-export function ServiceGrid({ services, isAdmin, getIcon }: ServiceGridProps) {
+// Helper to map category to icon
+const getIcon = (category: string) => {
+  switch (category?.toLowerCase()) {
+    case 'schedule': return <Calendar className="h-6 w-6" />;
+    case 'image': return <ImageIcon className="h-6 w-6" />;
+    case 'document': return <FileText className="h-6 w-6" />;
+    case 'development': return <Code className="h-6 w-6" />;
+    case 'analytics': return <MessageSquare className="h-6 w-6" />;
+    default: return <Sparkles className="h-6 w-6" />;
+  }
+};
+
+export function ServiceGrid({ services, isAdmin }: ServiceGridProps) {
   if (!services || services.length === 0) {
     return (
       <motion.div 

@@ -4,28 +4,13 @@ import { Header } from "@/components/Header";
 import { ServiceCard } from "@/components/ServiceCard";
 import { createClient } from "@/lib/supabase/server";
 import { 
-  Calendar, 
-  Image as ImageIcon, 
-  FileText, 
-  Code, 
-  MessageSquare, 
   Sparkles, 
   AlertCircle 
 } from "lucide-react";
 import { getUserRole } from "@/lib/actions";
 import { ServiceGrid } from "@/components/ServiceGrid";
 
-// Helper to map category to icon (Server Component compatible)
-const getIcon = (category: string) => {
-  switch (category?.toLowerCase()) {
-    case 'schedule': return <Calendar className="h-6 w-6" />;
-    case 'image': return <ImageIcon className="h-6 w-6" />;
-    case 'document': return <FileText className="h-6 w-6" />;
-    case 'development': return <Code className="h-6 w-6" />;
-    case 'analytics': return <MessageSquare className="h-6 w-6" />;
-    default: return <Sparkles className="h-6 w-6" />;
-  }
-};
+// DashboardPage Component
 
 export default async function DashboardPage({
   searchParams,
@@ -199,7 +184,6 @@ on conflict (id) do nothing;`}
           <ServiceGrid 
             services={services || []} 
             isAdmin={isAdmin} 
-            getIcon={getIcon} 
           />
         </div>
       </main>

@@ -122,18 +122,7 @@ $$ language plpgsql security definer;
 
 create trigger on_signup after insert on auth.users for each row execute procedure public.handle_new_user();
 
--- 3. 가상 프로젝트(애경 지속가능 프로젝트) 데이터 주입
-insert into public.services (title, description, url, category, thumbnail_image)
-values (
-  '애경 지속가능 프로젝트', 
-  '애경그룹의 ESG 경영 및 지속가능성 지표를 관리하는 AI 자동화 시스템입니다.', 
-  'https://www.aekyung.co.kr', 
-  'document', 
-  'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop'
-)
-on conflict do nothing;
-
--- 4. 기존 사용자 권한 전환
+-- 3. 기존 사용자 권한 전환 (첫 번째 사용자를 관리자로 지정)
 insert into public.profiles (id, role)
 select id, 'admin' from auth.users order by created_at asc limit 1
 on conflict (id) do nothing;`}
@@ -149,7 +138,7 @@ on conflict (id) do nothing;`}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div className="p-4 bg-accent/5 rounded-lg border border-accent/10">
                       <span className="font-bold text-accent block mb-1">STEP 1</span>
-                      위 SQL 코드를 전체 복사합니다.
+                      위 SQL 코드를 복사합니다.
                     </div>
                     <div className="p-4 bg-accent/5 rounded-lg border border-accent/10">
                       <span className="font-bold text-accent block mb-1">STEP 2</span>

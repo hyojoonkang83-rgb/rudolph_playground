@@ -12,7 +12,8 @@ const menuItems = [
 export function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 hidden h-full w-[260px] flex-col border-r border-border bg-white lg:flex">
-      <div className="flex h-16 items-center border-b border-border px-6">
+      <div className="flex h-16 items-center border-b border-border px-6 gap-3">
+        <img src="/logo.png" alt="Rudolph Logo" className="h-8 w-8 object-contain" />
         <h1 className="text-xl font-bold tracking-tighter">RUDOLPH</h1>
       </div>
       

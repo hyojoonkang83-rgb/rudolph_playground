@@ -47,8 +47,10 @@ export function MobileMenu() {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed inset-y-0 left-0 z-50 w-[280px] bg-white p-6 shadow-2xl"
             >
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3 mb-8">
+                <img src="/logo.png" alt="Rudolph Logo" className="h-8 w-8 object-contain" />
                 <h2 className="text-xl font-bold tracking-tighter">RUDOLPH</h2>
+                <div className="flex-1" />
                 <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)} className="p-1">
                   <X className="h-6 w-6" />
                 </Button>

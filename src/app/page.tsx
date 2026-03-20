@@ -13,6 +13,7 @@ import {
   AlertCircle 
 } from "lucide-react";
 import { getUserRole } from "@/lib/actions";
+import { ServiceGrid } from "@/components/ServiceGrid";
 
 // Helper to map category to icon (Server Component compatible)
 const getIcon = (category: string) => {
@@ -26,7 +27,12 @@ const getIcon = (category: string) => {
   }
 };
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string; q?: string }>;
+}) {
+  const { category, q } = await searchParams;
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const isEnvMissing = !supabaseUrl || !supabaseAnonKey;
@@ -35,12 +41,20 @@ export default async function DashboardPage() {
   const isAdmin = role === "admin";
 
   const supabase = await createClient();
+  
+  let dbQuery = supabase.from("services").select("*");
+  
+  if (category) {
+    dbQuery = dbQuery.eq('category', category);
+  }
+  
+  if (q) {
+    dbQuery = dbQuery.or(`title.ilike.%${q}%,description.ilike.%${q}%`);
+  }
+
   const { data: services, error } = isEnvMissing 
     ? { data: null, error: { message: "Environment variables missing", code: "ENV_MISSING" } as any }
-    : await supabase
-        .from("services")
-        .select("*")
-        .order("created_at", { ascending: false });
+    : await dbQuery.order("created_at", { ascending: false });
 
   if (error || isEnvMissing) {
     const isTableMissing = error?.message?.includes("public.services") || 
@@ -182,28 +196,11 @@ on conflict (id) do nothing;`}
             </p>
           </div>
 
-          {!services || services.length === 0 ? (
-            <div className="flex h-64 flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-white p-12 text-center">
-              <p className="text-lg font-medium text-foreground">등록된 서비스가 없습니다.</p>
-              <p className="mt-1 text-sm text-secondary">관리자 권한으로 첫 번째 서비스를 등록해 보세요.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {services.map((service) => (
-                <ServiceCard 
-                  key={service.id} 
-                  id={service.id}
-                  title={service.title}
-                  description={service.description}
-                  category={service.category}
-                  url={service.url}
-                  icon={getIcon(service.category)}
-                  isAdmin={isAdmin}
-                />
-              ))}
-            </div>
-          )
-}
+          <ServiceGrid 
+            services={services || []} 
+            isAdmin={isAdmin} 
+            getIcon={getIcon} 
+          />
         </div>
       </main>
     </div>

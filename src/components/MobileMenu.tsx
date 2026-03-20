@@ -5,16 +5,20 @@ import { Menu, X, LayoutGrid, FileText, Image, Calendar, LogOut } from "lucide-r
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const menuItems = [
-  { icon: LayoutGrid, label: "All Services", active: true },
-  { icon: Image, label: "Image Tools", active: false },
-  { icon: FileText, label: "Documents", active: false },
-  { icon: Calendar, label: "Schedules", active: false },
+  { icon: LayoutGrid, label: "All Services", category: null },
+  { icon: Image, label: "Image Tools", category: "image" },
+  { icon: FileText, label: "Documents", category: "document" },
+  { icon: Calendar, label: "Schedules", category: "schedule" },
 ];
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const currentCategory = searchParams.get("category");
 
   return (
     <div className="lg:hidden">
@@ -57,21 +61,25 @@ export function MobileMenu() {
               </div>
 
               <nav className="space-y-2">
-                {menuItems.map((item) => (
-                  <button
-                    key={item.label}
-                    onClick={() => setIsOpen(false)}
-                    className={cn(
-                      "flex w-full items-center gap-4 rounded-xl px-4 py-3 text-base font-medium transition-all active:scale-95",
-                      item.active 
-                        ? "bg-black text-white shadow-lg shadow-black/10" 
-                        : "text-secondary hover:bg-surface hover:text-foreground"
-                    )}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    {item.label}
-                  </button>
-                ))}
+                {menuItems.map((item) => {
+                  const isActive = item.category === currentCategory;
+                  return (
+                    <Link
+                      key={item.label}
+                      href={item.category ? `/?category=${item.category}` : "/"}
+                      onClick={() => setIsOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-4 rounded-xl px-4 py-3 text-base font-medium transition-all active:scale-95",
+                        isActive 
+                          ? "bg-black text-white shadow-lg shadow-black/10" 
+                          : "text-secondary hover:bg-surface hover:text-foreground"
+                      )}
+                    >
+                      <item.icon className={cn("h-5 w-5", isActive ? "text-accent" : "text-secondary")} />
+                      {item.label}
+                    </Link>
+                  );
+                })}
               </nav>
 
               <div className="absolute bottom-8 left-6 right-6">

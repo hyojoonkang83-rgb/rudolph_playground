@@ -1,26 +1,50 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AddServiceButton } from "./AddServiceButton";
 import { MobileMenu } from "./MobileMenu";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface HeaderProps {
   isAdmin?: boolean;
 }
 
 export function Header({ isAdmin }: HeaderProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("q") || "");
+
+  useEffect(() => {
+    setQuery(searchParams.get("q") || "");
+  }, [searchParams]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
+    if (query) {
+      params.set("q", query);
+    } else {
+      params.delete("q");
+    }
+    router.push(`/?${params.toString()}`);
+  };
+
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border bg-white/80 px-4 md:px-8 backdrop-blur-md">
       <div className="flex items-center gap-4">
         <MobileMenu />
-        <div className="relative hidden w-64 md:block lg:w-96">
+        <form onSubmit={handleSearch} className="relative hidden w-64 md:block lg:w-96">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary" />
           <input
             type="text"
             placeholder="Search AI services..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             className="h-10 w-full rounded-md border border-border bg-surface pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-accent/20 transition-all"
           />
-        </div>
+        </form>
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">

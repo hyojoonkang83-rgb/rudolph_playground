@@ -9,9 +9,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 interface HeaderProps {
   isAdmin?: boolean;
+  userEmail?: string | null;
 }
 
-export function Header({ isAdmin }: HeaderProps) {
+export function Header({ isAdmin, userEmail }: HeaderProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
@@ -34,7 +35,7 @@ export function Header({ isAdmin }: HeaderProps) {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border bg-white/80 px-4 md:px-8 backdrop-blur-md">
       <div className="flex items-center gap-4">
-        <MobileMenu />
+        <MobileMenu userEmail={userEmail} />
         <form onSubmit={handleSearch} className="relative hidden w-64 md:block lg:w-96">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary" />
           <input

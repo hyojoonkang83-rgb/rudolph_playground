@@ -13,7 +13,11 @@ const menuItems = [
   { icon: Calendar, label: "Schedules", category: "schedule" },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  userEmail?: string | null;
+}
+
+export function Sidebar({ userEmail }: SidebarProps) {
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get("category");
 
@@ -45,15 +49,25 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-border p-4 space-y-1">
-        <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-secondary hover:bg-surface hover:text-foreground transition-colors">
-          <Settings className="h-4 w-4" />
-          Settings
-        </button>
-        <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-danger hover:bg-danger/5 transition-colors">
-          <LogOut className="h-4 w-4" />
-          Logout
-        </button>
+      <div className="border-t border-border p-4 space-y-4">
+        {userEmail && (
+          <div className="px-3 py-2 bg-surface/50 rounded-lg border border-border/50">
+            <p className="text-[10px] font-bold text-secondary uppercase tracking-wider mb-1">Logged in as</p>
+            <p className="text-xs font-medium text-foreground truncate" title={userEmail}>
+              {userEmail}
+            </p>
+          </div>
+        )}
+        <div className="space-y-1">
+          <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-secondary hover:bg-surface hover:text-foreground transition-colors">
+            <Settings className="h-4 w-4" />
+            Settings
+          </button>
+          <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-danger hover:bg-danger/5 transition-colors">
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
+        </div>
       </div>
     </aside>
   );

@@ -15,7 +15,11 @@ const menuItems = [
   { icon: Calendar, label: "Schedules", category: "schedule" },
 ];
 
-export function MobileMenu() {
+interface MobileMenuProps {
+  userEmail?: string | null;
+}
+
+export function MobileMenu({ userEmail }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get("category");
@@ -82,7 +86,15 @@ export function MobileMenu() {
                 })}
               </nav>
 
-              <div className="absolute bottom-8 left-6 right-6">
+              <div className="absolute bottom-8 left-6 right-6 space-y-4">
+                {userEmail && (
+                  <div className="px-4 py-3 bg-surface rounded-xl border border-border/50">
+                    <p className="text-[10px] font-bold text-secondary uppercase tracking-wider mb-0.5">Logged in as</p>
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {userEmail}
+                    </p>
+                  </div>
+                )}
                 <button 
                   className="flex w-full items-center gap-4 rounded-xl px-4 py-3 text-base font-medium text-danger hover:bg-danger/5 transition-colors"
                   onClick={() => setIsOpen(false)}

@@ -165,11 +165,14 @@ on conflict (id) do nothing;`}
     );
   }
 
+  const { data: { user } } = await supabase.auth.getUser();
+  const userEmail = user?.email || null;
+
   return (
     <div className="flex min-h-screen bg-surface">
-      <Sidebar />
+      <Sidebar userEmail={userEmail} />
       <main className="flex-1 lg:pl-[260px]">
-        <Header isAdmin={isAdmin} />
+        <Header isAdmin={isAdmin} userEmail={userEmail} />
         
         <div className="p-8">
           <div className="mb-8">

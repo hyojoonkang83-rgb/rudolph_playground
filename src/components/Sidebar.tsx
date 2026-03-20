@@ -6,7 +6,8 @@ import React from "react";
 import { LayoutGrid, FileText, Image as ImageIcon, Calendar, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 const menuItems = [
   { icon: LayoutGrid, label: "All Services", category: null },
@@ -27,6 +28,17 @@ interface SidebarProps {
 export function Sidebar({ userEmail, isAdmin }: SidebarProps) {
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get("category");
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  const handleSettings = () => {
+    alert("설정 기능은 현재 준비 중입니다.");
+  };
 
   return (
     <aside className="fixed left-0 top-0 hidden h-full w-[260px] flex-col border-r border-border bg-white lg:flex">
@@ -81,11 +93,11 @@ export function Sidebar({ userEmail, isAdmin }: SidebarProps) {
           </div>
         )}
         <div className="space-y-1">
-          <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-secondary hover:bg-surface hover:text-foreground transition-colors">
+          <button onClick={handleSettings} className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-secondary hover:bg-surface hover:text-foreground transition-colors">
             <Settings className="h-4 w-4" />
             Settings
           </button>
-          <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-danger hover:bg-danger/5 transition-colors">
+          <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-danger hover:bg-danger/5 transition-colors">
             <LogOut className="h-4 w-4" />
             Logout
           </button>

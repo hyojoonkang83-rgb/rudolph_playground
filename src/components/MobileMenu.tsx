@@ -3,12 +3,13 @@
 import Image from "next/image";
 
 import React, { useState } from "react";
-import { Menu, X, LayoutGrid, FileText, Image as ImageIcon, Calendar, LogOut } from "lucide-react";
+import { Menu, X, LayoutGrid, FileText, Image as ImageIcon, Calendar, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 const menuItems = [
   { icon: LayoutGrid, label: "All Services", category: null },
@@ -25,6 +26,17 @@ export function MobileMenu({ userEmail }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get("category");
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  const handleSettings = () => {
+    alert("설정 기능은 현재 준비 중입니다.");
+  };
 
   return (
     <div className="lg:hidden">
@@ -97,13 +109,22 @@ export function MobileMenu({ userEmail }: MobileMenuProps) {
                     </p>
                   </div>
                 )}
-                <button 
-                  className="flex w-full items-center gap-4 rounded-xl px-4 py-3 text-base font-medium text-danger hover:bg-danger/5 transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <LogOut className="h-5 w-5" />
-                  Logout
-                </button>
+                <div className="flex gap-2">
+                  <button 
+                    className="flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-secondary hover:bg-surface hover:text-foreground transition-colors"
+                    onClick={() => { setIsOpen(false); handleSettings(); }}
+                  >
+                    <Settings className="h-4 w-4" />
+                    Settings
+                  </button>
+                  <button 
+                    className="flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-danger hover:bg-danger/5 transition-colors"
+                    onClick={() => { setIsOpen(false); handleLogout(); }}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </button>
+                </div>
               </div>
             </motion.div>
           </>
